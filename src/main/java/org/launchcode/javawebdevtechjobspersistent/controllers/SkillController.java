@@ -1,5 +1,6 @@
 package org.launchcode.javawebdevtechjobspersistent.controllers;
 
+
 import org.launchcode.javawebdevtechjobspersistent.models.Skill;
 import org.launchcode.javawebdevtechjobspersistent.models.data.SkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,9 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Optional;
+
 
 @Controller
 @RequestMapping("skills")
@@ -18,32 +22,33 @@ public class SkillController {
     private SkillRepository skillRepository;
 
     @GetMapping("add")
-    public String displayAddSkillForm(Model model) {
+    public String displayAddSkillsForm(Model model) {
         model.addAttribute(new Skill());
-        model.addAttribute("skills", skillRepository.findAll());
         return "skills/add";
     }
 
     @PostMapping("add")
-    public String processAddSkillForm(@ModelAttribute @Valid Skill newSkill,
-                                      Errors errors, Model model) {
+    public String processAddEmployerForm(@ModelAttribute @Valid Skill newSkill,
+                                         Errors errors, Model model) {
 
         if (errors.hasErrors()) {
             return "skills/add";
         }
         skillRepository.save(newSkill);
-        return "redirect:../";
+        return "redirect:/add";
     }
 
+    //if skill id exists, loads info about it to display.
     @GetMapping("view/{skillId}")
-    public String displayViewSkill(Model model, @PathVariable Integer skillId) {
+    public String displayViewEmployer(Model model, @PathVariable int skillId) {
 
-
-        if (skillId != null) {
-            model.addAttribute("skill", skillRepository.findById(skillId));
+        Optional optSkill = skillRepository.findById(skillId);
+        if (optSkill.isPresent()) {
+            Skill skill = (Skill) optSkill.get();
+            model.addAttribute("skill", skill);
             return "skills/view";
-        } else return "redirect:../";
+        } else {
+            return "redirect:../";
+        }
     }
-
-
 }
