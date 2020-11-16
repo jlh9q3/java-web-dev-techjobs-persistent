@@ -50,6 +50,7 @@ public class HomeController {
     @PostMapping("add")
     public String processAddJobForm(@ModelAttribute @Valid Job newJob,
                                     Errors errors, Model model, @RequestParam int employerId, @RequestParam List<Integer> skills) {
+
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Job");
             return "add";
@@ -66,7 +67,7 @@ public class HomeController {
 
     @GetMapping("view/{jobId}")
     public String displayViewJob(Model model, @PathVariable int jobId) {
-        //actually adds proper job to the model.
+
         if (jobRepository.findById(jobId).isPresent()) {
             model.addAttribute("job", jobRepository.findById(jobId).get());
         }
